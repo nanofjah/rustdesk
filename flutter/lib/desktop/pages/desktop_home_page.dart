@@ -1236,7 +1236,7 @@ class _AbcMatrixPainter extends CustomPainter {
       tp.text = TextSpan(
           text: ch,
           style: const TextStyle(
-              color: Color(0x22FFB300), fontSize: 12, fontFamily: 'monospace'));
+              color: Color(0x4DFFB300), fontSize: 13, fontFamily: 'monospace'));
       tp.layout();
       tp.paint(canvas, Offset(i * _col, drops[i] * _col));
       if (drops[i] * _col > size.height && rnd.nextDouble() > 0.975) {

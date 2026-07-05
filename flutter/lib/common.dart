@@ -579,7 +579,8 @@ class MyTheme {
   );
 
   static ThemeMode getThemeModePreference() {
-    return themeModeFromString(bind.mainGetLocalOption(key: kCommConfKeyTheme));
+    // AbcInfo: thème sombre forcé (design navy + matrice)
+    return ThemeMode.dark;
   }
 
   static Future<void> changeDarkMode(ThemeMode mode) async {

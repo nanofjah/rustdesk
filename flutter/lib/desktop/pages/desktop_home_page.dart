@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:io';
 import 'dart:convert';
 
@@ -91,14 +92,24 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         child: loadLogo(),
       ),
       const Padding(
-        padding: EdgeInsets.only(top: 4, bottom: 2),
+        padding: EdgeInsets.only(top: 4, bottom: 0),
         child: Text('Abcinfo',
             textAlign: TextAlign.center,
             style: TextStyle(
+                fontFamily: 'ShareTechMono',
                 color: Color(0xFFFFB300),
                 fontWeight: FontWeight.bold,
-                fontSize: 22,
+                fontSize: 24,
                 letterSpacing: 1.2)),
+      ),
+      const Padding(
+        padding: EdgeInsets.only(bottom: 8),
+        child: Text('+41 (0)22 320 56 00 · contact@abcinfo.ch',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontFamily: 'ShareTechMono',
+                color: Color(0xFF94A3B8),
+                fontSize: 11)),
       ),
       buildTip(context),
       if (!isOutgoingOnly) buildIDBoard(context),
@@ -142,7 +153,11 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       child: const Text(
         'Eric Miermon Informatique — abcinfo.ch · contact@abcinfo.ch · Carouge, Genève',
         textAlign: TextAlign.center,
-        style: TextStyle(color: Color(0xFF94A3B8), fontSize: 9, height: 1.4),
+        style: TextStyle(
+            fontFamily: 'ShareTechMono',
+            color: Color(0xFF94A3B8),
+            fontSize: 9,
+            height: 1.4),
       ),
     ));
     final textColor = Theme.of(context).textTheme.titleLarge?.color;
@@ -150,9 +165,10 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       value: gFFI.serverModel,
       child: Container(
         width: isIncomingOnly ? 280.0 : 200.0,
-        color: Theme.of(context).colorScheme.background,
+        color: const Color(0xFF0F172A),
         child: Stack(
           children: [
+            const Positioned.fill(child: _AbcMatrix()),
             Column(
               children: [
                 SingleChildScrollView(
@@ -624,14 +640,9 @@ class _DesktopHomePageState extends State<DesktopHomePage>
               0, marginTop, 0, bind.isIncomingOnly() ? marginTop : 0),
           child: Container(
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Color.fromARGB(255, 22, 35, 59),
-                  Color.fromARGB(255, 15, 23, 42),
-                ],
-              )),
+                  color: Colors.transparent,
+                  border: Border.all(color: const Color(0x55FFB300)),
+                  borderRadius: BorderRadius.circular(8)),
               padding: EdgeInsets.all(20),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -1161,4 +1172,80 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
       onCancel: close,
     );
   });
+}
+
+// ── AbcInfo : fond matrice (façon site abcinfo.ch) ──────────────────
+const _abcMatrixChars =
+    'アイウエオカキクケコサシスセソ0123456789ABCDEF><{}[]()';
+
+class _AbcMatrix extends StatefulWidget {
+  const _AbcMatrix();
+  @override
+  State<_AbcMatrix> createState() => _AbcMatrixState();
+}
+
+class _AbcMatrixState extends State<_AbcMatrix> {
+  Timer? _timer;
+  final math.Random _rnd = math.Random();
+  List<double> _drops = [];
+  double _w = -1;
+  static const double _col = 14.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 90), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, c) {
+      final cols = (c.maxWidth / _col).floor().clamp(1, 200);
+      if (_drops.length != cols || _w != c.maxWidth) {
+        _w = c.maxWidth;
+        _drops =
+            List<double>.generate(cols, (_) => _rnd.nextInt(40).toDouble());
+      }
+      return CustomPaint(
+        size: Size(c.maxWidth, c.maxHeight),
+        painter: _AbcMatrixPainter(_drops, _rnd),
+      );
+    });
+  }
+}
+
+class _AbcMatrixPainter extends CustomPainter {
+  final List<double> drops;
+  final math.Random rnd;
+  static const double _col = 14.0;
+  _AbcMatrixPainter(this.drops, this.rnd);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final tp = TextPainter(textDirection: TextDirection.ltr);
+    for (int i = 0; i < drops.length; i++) {
+      final ch = _abcMatrixChars[rnd.nextInt(_abcMatrixChars.length)];
+      tp.text = TextSpan(
+          text: ch,
+          style: const TextStyle(
+              color: Color(0x22FFB300), fontSize: 12, fontFamily: 'monospace'));
+      tp.layout();
+      tp.paint(canvas, Offset(i * _col, drops[i] * _col));
+      if (drops[i] * _col > size.height && rnd.nextDouble() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i] += 1;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _AbcMatrixPainter oldDelegate) => true;
 }

@@ -90,6 +90,16 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         alignment: Alignment.center,
         child: loadLogo(),
       ),
+      const Padding(
+        padding: EdgeInsets.only(top: 4, bottom: 2),
+        child: Text('Abcinfo',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Color(0xFFFFB300),
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+                letterSpacing: 1.2)),
+      ),
       buildTip(context),
       if (!isOutgoingOnly) buildIDBoard(context),
       if (!isOutgoingOnly) buildPasswordBoard(context),
@@ -127,6 +137,14 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         ).marginOnly(bottom: 6, right: 6)
       ]);
     }
+    children.add(Container(
+      padding: const EdgeInsets.fromLTRB(10, 16, 10, 8),
+      child: const Text(
+        'Eric Miermon Informatique — abcinfo.ch · contact@abcinfo.ch · Carouge, Genève',
+        textAlign: TextAlign.center,
+        style: TextStyle(color: Color(0xFF94A3B8), fontSize: 9, height: 1.4),
+      ),
+    ));
     final textColor = Theme.of(context).textTheme.titleLarge?.color;
     return ChangeNotifierProvider.value(
       value: gFFI.serverModel,
@@ -610,8 +628,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
                 colors: [
-                  Color.fromARGB(255, 226, 66, 188),
-                  Color.fromARGB(255, 244, 114, 124),
+                  Color.fromARGB(255, 22, 35, 59),
+                  Color.fromARGB(255, 15, 23, 42),
                 ],
               )),
               padding: EdgeInsets.all(20),

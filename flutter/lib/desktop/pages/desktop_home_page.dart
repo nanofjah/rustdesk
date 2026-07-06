@@ -87,30 +87,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
           alignment: Alignment.center,
           child: loadPowered(context),
         ),
-      Align(
-        alignment: Alignment.center,
-        child: loadLogo(),
-      ),
-      const Padding(
-        padding: EdgeInsets.only(top: 4, bottom: 0),
-        child: Text('Abcinfo',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: 'ShareTechMono',
-                color: Color(0xFFFFB300),
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-                letterSpacing: 1.2)),
-      ),
-      const Padding(
-        padding: EdgeInsets.only(bottom: 8),
-        child: Text('+41 (0)22 320 56 00 · contact@abcinfo.ch',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: 'ShareTechMono',
-                color: Color(0xFF94A3B8),
-                fontSize: 11)),
-      ),
+      const _AbcTitle(),
       buildTip(context),
       if (!isOutgoingOnly) buildIDBoard(context),
       if (!isOutgoingOnly) buildPasswordBoard(context),
@@ -148,18 +125,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         ).marginOnly(bottom: 6, right: 6)
       ]);
     }
-    children.add(Container(
-      padding: const EdgeInsets.fromLTRB(10, 16, 10, 8),
-      child: const Text(
-        'Eric Miermon Informatique — abcinfo.ch · contact@abcinfo.ch · Carouge, Genève',
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            fontFamily: 'ShareTechMono',
-            color: Color(0xFF94A3B8),
-            fontSize: 9,
-            height: 1.4),
-      ),
-    ));
+    children.add(const _AbcFooter());
     final textColor = Theme.of(context).textTheme.titleLarge?.color;
     return ChangeNotifierProvider.value(
       value: gFFI.serverModel,
@@ -726,6 +692,18 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   @override
   void initState() {
     super.initState();
+    // AbcInfo : mot de passe à usage unique activé + module serveur actif dès l'ouverture
+    Future.delayed(const Duration(milliseconds: 800), () async {
+      try {
+        await bind.mainSetOption(
+            key: kOptionVerificationMethod, value: kUseBothPasswords);
+        await bind.mainSetOption(key: kOptionApproveMode, value: 'password');
+        if (!gFFI.serverModel.isStart) {
+          await gFFI.serverModel.startService();
+        }
+        await gFFI.serverModel.updatePasswordModel();
+      } catch (_) {}
+    });
     _updateTimer = periodic_immediate(const Duration(seconds: 1), () async {
       await gFFI.serverModel.fetchID();
       final error = await bind.mainGetError();
@@ -1248,4 +1226,132 @@ class _AbcMatrixPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _AbcMatrixPainter oldDelegate) => true;
+}
+
+// ── AbcInfo : titre ">_ abcinfo" (curseur clignotant) + tagline ─────
+class _AbcTitle extends StatefulWidget {
+  const _AbcTitle();
+  @override
+  State<_AbcTitle> createState() => _AbcTitleState();
+}
+
+class _AbcTitleState extends State<_AbcTitle> {
+  Timer? _t;
+  bool _on = true;
+  @override
+  void initState() {
+    super.initState();
+    _t = Timer.periodic(const Duration(milliseconds: 550), (_) {
+      if (mounted) setState(() => _on = !_on);
+    });
+  }
+
+  @override
+  void dispose() {
+    _t?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const amber = Color(0xFFFFB300);
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 12),
+      child: Column(
+        children: [
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(children: [
+              const TextSpan(
+                  text: '>_ ',
+                  style: TextStyle(
+                      fontFamily: 'ShareTechMono',
+                      color: amber,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 26)),
+              const TextSpan(
+                  text: 'abcinfo',
+                  style: TextStyle(
+                      fontFamily: 'ShareTechMono',
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 26)),
+              TextSpan(
+                  text: '▌',
+                  style: TextStyle(
+                      fontFamily: 'ShareTechMono',
+                      color: _on ? amber : Colors.transparent,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 26)),
+            ]),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text('Service en informatique',
+                style: TextStyle(
+                    fontFamily: 'ShareTechMono',
+                    color: Color(0xFF94A3B8),
+                    fontSize: 11,
+                    letterSpacing: 0.5)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── AbcInfo : pied de page (liens cliquables) ──────────────────────
+class _AbcFooter extends StatelessWidget {
+  const _AbcFooter();
+
+  void _open(String url) {
+    try {
+      launchUrl(Uri.parse(url));
+    } catch (_) {}
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const grey = TextStyle(
+        fontFamily: 'ShareTechMono',
+        color: Color(0xFF94A3B8),
+        fontSize: 11,
+        height: 1.6);
+    const link = TextStyle(
+        fontFamily: 'ShareTechMono',
+        color: Color(0xFFFFB300),
+        fontSize: 11,
+        height: 1.6);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(8, 18, 8, 10),
+      child: Column(
+        children: [
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              const Text('Eric Miermon Informatique - ', style: grey),
+              GestureDetector(
+                  onTap: () => _open('https://www.abcinfo.ch'),
+                  child: const Text('www.abcinfo.ch', style: link)),
+            ],
+          ),
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              GestureDetector(
+                  onTap: () => _open('tel:+41223205600'),
+                  child: const Text('+41 (0)22 320 56 00', style: link)),
+              const Text(' - ', style: grey),
+              GestureDetector(
+                  onTap: () => _open('mailto:contact@abcinfo.ch'),
+                  child: const Text('contact@abcinfo.ch', style: link)),
+              const Text(' - Genève', style: grey),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }

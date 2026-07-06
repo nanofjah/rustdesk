@@ -846,6 +846,12 @@ jobs:
           fi
           ./build.py --flutter --hwcodec --unix-file-copy-paste ${{ matrix.job.extra-build-args }}
 
+      - name: Signature ad-hoc (sans certificat) — requise pour tourner sur Apple Silicon
+        if: env.MACOS_P12_BASE64 == null && env.UPLOAD_ARTIFACT == 'true'
+        run: |
+          codesign --force --deep --sign - ./flutter/build/macos/Build/Products/Release/RustDesk.app -vvv
+          codesign --verify --deep --strict --verbose=2 ./flutter/build/macos/Build/Products/Release/RustDesk.app || true
+
       - name: create unsigned dmg
         if: env.UPLOAD_ARTIFACT == 'true'
         run: |

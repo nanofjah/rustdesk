@@ -1013,8 +1013,13 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
                 Expanded(
                   child: TextField(
                     obscureText: true,
+                    cursorColor: const Color(0xFFFFB300),
                     decoration: InputDecoration(
                         labelText: translate('Password'),
+                        floatingLabelStyle:
+                            const TextStyle(color: Color(0xFFFFB300)),
+                        focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFFFB300))),
                         errorText: errMsg0.isNotEmpty ? errMsg0 : null),
                     controller: p0,
                     autofocus: true,
@@ -1043,8 +1048,13 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
                 Expanded(
                   child: TextField(
                     obscureText: true,
+                    cursorColor: const Color(0xFFFFB300),
                     decoration: InputDecoration(
                         labelText: translate('Confirmation'),
+                        floatingLabelStyle:
+                            const TextStyle(color: Color(0xFFFFB300)),
+                        focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFFFB300))),
                         errorText: errMsg1.isNotEmpty ? errMsg1 : null),
                     controller: p1,
                     onChanged: (value) {
@@ -1073,22 +1083,30 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
             SizedBox(
               height: showStatusTipOnMobile ? 0.0 : 8.0,
             ),
-            Obx(() => Wrap(
-                  runSpacing: 4.0,
-                  spacing: 14,
-                  children: rules.map((e) {
-                    var checked = e.validate(rxPass.value.trim());
-                    return Text(
-                      e.name,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: checked
-                            ? const Color(0xFFFFB300)
-                            : const Color(0xFF94A3B8),
-                      ),
-                    );
-                  }).toList(),
-                ))
+            Center(
+              child: Obx(() => FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: rules.map((e) {
+                        var checked = e.validate(rxPass.value.trim());
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 7),
+                          child: Text(
+                            e.name,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.normal,
+                              color: checked
+                                  ? const Color(0xFFFFB300)
+                                  : const Color(0xFF94A3B8),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  )),
+            )
           ],
         ),
       ),
@@ -1154,9 +1172,20 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
           ];
         }
         return [
-          cancelButton,
-          if (localPasswordSet) removeButton,
-          okButton,
+          Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                cancelButton,
+                if (localPasswordSet) ...[
+                  const SizedBox(width: 8),
+                  removeButton,
+                ],
+                const SizedBox(width: 8),
+                okButton,
+              ],
+            ),
+          ),
         ];
       })(),
       onSubmit: canSubmit ? submit : null,

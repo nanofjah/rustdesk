@@ -134,7 +134,13 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         color: const Color(0xFF0F172A),
         child: Stack(
           children: [
-            const Positioned.fill(child: _AbcMatrix()),
+            Positioned.fill(
+              child: Image.asset('assets/hero-bg.jpg', fit: BoxFit.cover),
+            ),
+            const Positioned.fill(
+              child: DecoratedBox(
+                  decoration: BoxDecoration(color: Color(0x990F172A))),
+            ),
             Column(
               children: [
                 SingleChildScrollView(

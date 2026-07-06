@@ -1083,25 +1083,36 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
             SizedBox(
               height: showStatusTipOnMobile ? 0.0 : 8.0,
             ),
-            Obx(() => Wrap(
-                  alignment: WrapAlignment.center,
-                  runAlignment: WrapAlignment.center,
-                  spacing: 18,
-                  runSpacing: 6,
-                  children: rules.map((e) {
-                    var checked = e.validate(rxPass.value.trim());
-                    return Text(
-                      e.name,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.normal,
-                        color: checked
-                            ? const Color(0xFFFFB300)
-                            : const Color(0xFF94A3B8),
-                      ),
-                    );
-                  }).toList(),
-                ))
+            Obx(() {
+              final pass = rxPass.value.trim();
+              Text lbl(int i, String text) => Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.normal,
+                      color: rules[i].validate(pass)
+                          ? const Color(0xFFFFB300)
+                          : const Color(0xFF94A3B8),
+                    ),
+                  );
+              const sep = Text(' - ',
+                  style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8)));
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [lbl(0, 'Chiffre'), sep, lbl(1, 'Majuscule')],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [lbl(2, 'Minuscule'), sep, lbl(3, 'Longueur >8')],
+                  ),
+                ],
+              );
+            })
           ],
         ),
       ),

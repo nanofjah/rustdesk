@@ -672,7 +672,9 @@ jobs:
 
 
   build-for-macOS:
-    if: false
+    # AbcInfo : activé, Silicon (aarch64) uniquement pour le 1er build de validation ;
+    # Intel/universel = phase 2.
+    if: true
     name: ${{ matrix.job.target }}
     runs-on: ${{ matrix.job.os }}
     needs: [generate-bridge]
@@ -681,16 +683,8 @@ jobs:
       matrix:
         job:
           - {
-              target: x86_64-apple-darwin,
-              os: macos-15-intel, #macos-latest or macos-14 use M1 now, https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#:~:text=14%20GB-,macos%2Dlatest%20or%20macos%2D14,-The%20macos%2Dlatestlabel
-              extra-build-args: "",
-              arch: x86_64,
-              vcpkg-triplet: x64-osx,
-            }
-          - {
               target: aarch64-apple-darwin,
               os: macos-14,
-              # extra-build-args: "--disable-flutter-texture-render", # disable this for mac, because we see a lot of users reporting flickering both on arm and x64, and we can not confirm if texture rendering has better performance if htere is no vram, https://github.com/rustdesk/rustdesk/issues/6296
               extra-build-args: "--screencapturekit",
               arch: aarch64,
               vcpkg-triplet: arm64-osx,
@@ -707,6 +701,17 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           submodules: recursive
+
+      - name: Injecter le relais AbcInfo dans config.rs (macOS, perl portable)
+        shell: bash
+        run: |
+          CFG=libs/hbb_common/src/config.rs
+          perl -i -pe 's{pub const RENDEZVOUS_SERVERS.*}{pub const RENDEZVOUS_SERVERS: &[&str] = &["remote.abcinfo.ch"];}' "$CFG"
+          perl -i -pe 's{pub const RS_PUB_KEY.*}{pub const RS_PUB_KEY: &str = "e7DV9f24+bwd6FsgWoukIdHxJsqa+xf+xzVx9JaTC08=";}' "$CFG"
+          perl -i -pe 's{RwLock::new\("RustDesk"\.to_owned\(\)\)}{RwLock::new("Abcinfo-Remote".to_owned())}' "$CFG"
+          perl -0777 -i -pe 's/pub fn is_incoming_only\(\) -> bool \{.*?\n\}/pub fn is_incoming_only() -> bool { true }/s' "$CFG"
+          echo '=== config.rs patché (macOS) ==='
+          grep -nE 'RENDEZVOUS_SERVERS|RS_PUB_KEY|AbcInfo|is_incoming_only' "$CFG"
 
       - name: Import the codesign cert
         if: env.MACOS_P12_BASE64 != null
@@ -882,7 +887,7 @@ jobs:
           done
 
       - name: Publish DMG package
-        if: env.UPLOAD_ARTIFACT == 'true'
+        if: false # AbcInfo : désactivé (gh-release 403 sur un fork) ; on garde l'artefact non signé
         uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v1
         with:
           prerelease: true

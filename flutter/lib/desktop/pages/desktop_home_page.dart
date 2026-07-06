@@ -1273,7 +1273,7 @@ class _AbcTitleState extends State<_AbcTitle> {
                   text: 'abcinfo',
                   style: TextStyle(
                       fontFamily: 'ShareTechMono',
-                      color: Colors.white,
+                      color: amber,
                       fontWeight: FontWeight.bold,
                       fontSize: 26)),
               TextSpan(
@@ -1314,7 +1314,7 @@ class _AbcFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     const grey = TextStyle(
         fontFamily: 'ShareTechMono',
-        color: Color(0xFF94A3B8),
+        color: Color(0xFFFFB300),
         fontSize: 11,
         height: 1.6);
     const link = TextStyle(

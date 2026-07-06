@@ -154,8 +154,9 @@ fn resolve_lang(saved_lang: &str, locale: &str, cjk_fallback: bool) -> String {
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub fn translate(name: String) -> String {
-    let locale = sys_locale::get_locale().unwrap_or_default();
-    translate_locale(name, &locale)
+    // AbcInfo : français par défaut. Un choix de langue enregistré (option "lang")
+    // reste prioritaire ; on ne retombe pas sur la locale système mais sur "fr".
+    translate_locale(name, "fr")
 }
 
 pub fn translate_locale(name: String, locale: &str) -> String {

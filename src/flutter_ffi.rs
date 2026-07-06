@@ -2256,7 +2256,10 @@ pub fn main_get_build_date() -> String {
 }
 
 pub fn translate(name: String, locale: String) -> SyncReturn<String> {
-    SyncReturn(crate::client::translate_locale(name, &locale))
+    // AbcInfo : français par défaut au lieu de la locale système Windows.
+    // Un choix de langue enregistré (option "lang") reste prioritaire dans resolve_lang.
+    let _ = locale;
+    SyncReturn(crate::client::translate_locale(name, "fr"))
 }
 
 pub fn session_get_rgba_size(session_id: SessionID, display: usize) -> SyncReturn<usize> {

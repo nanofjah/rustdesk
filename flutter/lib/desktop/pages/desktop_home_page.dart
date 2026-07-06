@@ -229,6 +229,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                 readOnly: true,
                 decoration: InputDecoration(
                   border: InputBorder.none,
+                  filled: false,
+                  fillColor: Colors.transparent,
                   contentPadding: EdgeInsets.only(top: 10, bottom: 10),
                 ),
                 style: TextStyle(
@@ -315,6 +317,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                       readOnly: true,
                       decoration: InputDecoration(
                         border: InputBorder.none,
+                        filled: false,
+                        fillColor: Colors.transparent,
                         contentPadding: EdgeInsets.only(top: 14, bottom: 10),
                       ),
                       style: TextStyle(fontSize: 15, color: Color(0xFFFFB300)),

@@ -355,12 +355,31 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                       ).marginOnly(right: 8, top: 4),
                     ),
                   ),
-                  onTap: () =>
-                      DesktopSettingPage.switch2page(SettingsTabKey.safety),
+                  onTap: () => setPasswordDialog(),
                   onHover: (value) => editHover.value = value,
                 ),
             ],
           ),
+          // AbcInfo : accès direct au mot de passe permanent (accès non surveillé),
+          // sans passer par la page Sécurité verrouillée (aucune élévation UAC requise).
+          InkWell(
+            onTap: () => setPasswordDialog(),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.key, size: 15, color: const Color(0xFFFFB300)),
+                const SizedBox(width: 6),
+                Text(
+                  'Définir un mot de passe permanent',
+                  style: TextStyle(
+                    color: const Color(0xFFFFB300),
+                    fontSize: 12,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ],
+            ),
+          ).marginOnly(top: 10),
         ],
       ),
     );

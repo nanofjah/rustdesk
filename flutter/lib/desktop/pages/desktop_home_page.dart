@@ -619,7 +619,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                   child: Text(
                                 translate(title),
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color: Color(0xFF94A3B8),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15),
                               ).marginOnly(bottom: 6)),
@@ -631,7 +631,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                             translate(content),
                             style: TextStyle(
                                 height: 1.5,
-                                color: Colors.white,
+                                color: Color(0xFF94A3B8),
                                 fontWeight: FontWeight.normal,
                                 fontSize: 13),
                           ).marginOnly(bottom: 20)

@@ -122,7 +122,7 @@ jobs:
           CFG=libs/hbb_common/src/config.rs
           sed -i 's#pub const RENDEZVOUS_SERVERS.*#pub const RENDEZVOUS_SERVERS: \&[\&str] = \&["remote.abcinfo.ch"];#' "$CFG"
           sed -i 's#pub const RS_PUB_KEY.*#pub const RS_PUB_KEY: \&str = "e7DV9f24+bwd6FsgWoukIdHxJsqa+xf+xzVx9JaTC08=";#' "$CFG"
-          sed -i 's#RwLock::new("RustDesk".to_owned())#RwLock::new("AbcInfo".to_owned())#' "$CFG"
+          sed -i 's#RwLock::new("RustDesk".to_owned())#RwLock::new("Abcinfo-Remote".to_owned())#' "$CFG"
           # Mode "réception seule" : forcer is_incoming_only() -> true (masque le panneau de contrôle)
           perl -0777 -i -pe 's/pub fn is_incoming_only\(\) -> bool \{.*?\n\}/pub fn is_incoming_only() -> bool { true }/s' "$CFG"
           echo '=== config.rs patché ==='
@@ -346,7 +346,7 @@ jobs:
           sed -i '/dpiAware/d' res/manifest.xml
           pushd ./libs/portable
           pip3 install -r requirements.txt
-          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/AbcInfo.exe
+          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/Abcinfo-Remote.exe
           popd
           mkdir -p ./SignOutput
           mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.exe
@@ -361,7 +361,7 @@ jobs:
         if: env.UPLOAD_ARTIFACT == 'true'
         run: |
           pushd ./res/msi
-          python preprocess.py --arp -d ../../rustdesk --app-name "AbcInfo"
+          python preprocess.py --arp -d ../../rustdesk --app-name "Abcinfo-Remote"
           nuget restore msi.sln
           $msiPlatform = if ('${{ matrix.job.arch }}' -eq 'aarch64') { 'ARM64' } else { 'x64' }
           msbuild msi.sln -p:Configuration=Release -p:Platform=$msiPlatform /p:TargetVersion=Windows10

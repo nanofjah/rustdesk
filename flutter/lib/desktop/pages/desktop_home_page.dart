@@ -981,9 +981,23 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
     return CustomAlertDialog(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(Icons.key, color: MyTheme.accent),
-          Text(translate("Set Password")).paddingOnly(left: 10),
+          const Icon(Icons.key, color: Color(0xFFFFB300), size: 20),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              translate("Set Password"),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              softWrap: true,
+              style: const TextStyle(
+                color: Color(0xFFFFB300),
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ],
       ),
       content: ConstrainedBox(
@@ -1060,32 +1074,36 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
               height: showStatusTipOnMobile ? 0.0 : 8.0,
             ),
             Obx(() => Wrap(
-                  runSpacing: showStatusTipOnMobile ? 2.0 : 8.0,
-                  spacing: 4,
+                  runSpacing: 4.0,
+                  spacing: 14,
                   children: rules.map((e) {
                     var checked = e.validate(rxPass.value.trim());
-                    return Chip(
-                        label: Text(
-                          e.name,
-                          style: TextStyle(
-                              color: checked
-                                  ? const Color(0xFF0A9471)
-                                  : Color.fromARGB(255, 198, 86, 157)),
-                        ),
-                        backgroundColor: checked
-                            ? const Color(0xFFD0F7ED)
-                            : Color.fromARGB(255, 247, 205, 232));
+                    return Text(
+                      e.name,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: checked
+                            ? const Color(0xFFFFB300)
+                            : const Color(0xFF94A3B8),
+                      ),
+                    );
                   }).toList(),
                 ))
           ],
         ),
       ),
       actions: (() {
-        final cancelButton = dialogButton(
-          "Cancel",
-          icon: Icon(Icons.close_rounded),
+        final orangeBtnStyle = OutlinedButton.styleFrom(
+          foregroundColor: const Color(0xFFFFB300),
+          side: const BorderSide(color: Color(0xFFFFB300)),
+          shape:
+              const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        );
+        final cancelButton = OutlinedButton.icon(
+          style: orangeBtnStyle,
+          icon: const Icon(Icons.close_rounded),
           onPressed: close,
-          isOutline: true,
+          label: Text(translate("Cancel")),
         );
         final removeButton = dialogButton(
           "Remove",
@@ -1108,10 +1126,11 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
           buttonStyle: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.red)),
         );
-        final okButton = dialogButton(
-          "OK",
-          icon: Icon(Icons.done_rounded),
+        final okButton = OutlinedButton.icon(
+          style: orangeBtnStyle,
+          icon: const Icon(Icons.done_rounded),
           onPressed: canSubmit ? submit : null,
+          label: Text(translate("OK")),
         );
         if (!isDesktop && !isWebDesktop && localPasswordSet) {
           return [
@@ -1341,7 +1360,6 @@ class _AbcFooter extends StatelessWidget {
               GestureDetector(
                   onTap: () => _open('mailto:contact@abcinfo.ch'),
                   child: const Text('contact@abcinfo.ch', style: link)),
-              const Text(' - Genève', style: grey),
             ],
           ),
         ],

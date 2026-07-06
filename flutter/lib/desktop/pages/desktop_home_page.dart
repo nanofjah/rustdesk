@@ -1083,30 +1083,25 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
             SizedBox(
               height: showStatusTipOnMobile ? 0.0 : 8.0,
             ),
-            Center(
-              child: Obx(() => FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: rules.map((e) {
-                        var checked = e.validate(rxPass.value.trim());
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 7),
-                          child: Text(
-                            e.name,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.normal,
-                              color: checked
-                                  ? const Color(0xFFFFB300)
-                                  : const Color(0xFF94A3B8),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  )),
-            )
+            Obx(() => Wrap(
+                  alignment: WrapAlignment.center,
+                  runAlignment: WrapAlignment.center,
+                  spacing: 18,
+                  runSpacing: 6,
+                  children: rules.map((e) {
+                    var checked = e.validate(rxPass.value.trim());
+                    return Text(
+                      e.name,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.normal,
+                        color: checked
+                            ? const Color(0xFFFFB300)
+                            : const Color(0xFF94A3B8),
+                      ),
+                    );
+                  }).toList(),
+                ))
           ],
         ),
       ),
@@ -1116,12 +1111,16 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
           side: const BorderSide(color: Color(0xFFFFB300)),
           shape:
               const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          minimumSize: const Size(0, 32),
+          textStyle:
+              const TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         );
-        final cancelButton = OutlinedButton.icon(
+        final cancelButton = OutlinedButton(
           style: orangeBtnStyle,
-          icon: const Icon(Icons.close_rounded),
           onPressed: close,
-          label: Text(translate("Cancel")),
+          child: Text(translate("Cancel")),
         );
         final removeButton = dialogButton(
           "Remove",
@@ -1144,11 +1143,10 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
           buttonStyle: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(Colors.red)),
         );
-        final okButton = OutlinedButton.icon(
+        final okButton = OutlinedButton(
           style: orangeBtnStyle,
-          icon: const Icon(Icons.done_rounded),
           onPressed: canSubmit ? submit : null,
-          label: Text(translate("OK")),
+          child: Text(translate("OK")),
         );
         if (!isDesktop && !isWebDesktop && localPasswordSet) {
           return [
@@ -1173,17 +1171,20 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
         }
         return [
           Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                cancelButton,
-                if (localPasswordSet) ...[
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  cancelButton,
+                  if (localPasswordSet) ...[
+                    const SizedBox(width: 8),
+                    removeButton,
+                  ],
                   const SizedBox(width: 8),
-                  removeButton,
+                  okButton,
                 ],
-                const SizedBox(width: 8),
-                okButton,
-              ],
+              ),
             ),
           ),
         ];

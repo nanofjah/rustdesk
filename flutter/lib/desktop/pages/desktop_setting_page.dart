@@ -2462,6 +2462,14 @@ class _AboutState extends State<_About> {
                     translate('Website'),
                     style: linkStyle,
                   ).marginSymmetric(vertical: 4.0)),
+              InkWell(
+                  onTap: () {
+                    launchUrlString('https://github.com/nanofjah/rustdesk');
+                  },
+                  child: Text(
+                    'Code source (AGPLv3)',
+                    style: linkStyle,
+                  ).marginSymmetric(vertical: 4.0)),
               Container(
                 decoration: const BoxDecoration(color: Color(0xFF2c8cff)),
                 padding:

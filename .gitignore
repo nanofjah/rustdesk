@@ -56,3 +56,8 @@ vcpkg_installed
 flutter/lib/generated_plugin_registrant.dart
 libsciter.dylib
 flutter/web/
+# --- AbcInfo : assets de branding ---------------------------------------
+# Les motifs *png / *jpg ci-dessus les bloquaient silencieusement lors d'un
+# `git add -A` → l'icône tray et le fond retombaient sur ceux de RustDesk.
+!flutter/assets/icon.png
+!flutter/assets/hero-bg.jpg

@@ -41,9 +41,15 @@ fn make_tray() -> hbb_common::ResultType<()> {
     }
 
     let (icon_rgba, icon_width, icon_height) = {
+        // macOS : toujours l'image template embarquée (fond transparent + >_).
+        // Sinon load_icon_from_asset() renvoie assets/icon.png (icône PLEINE) qui,
+        // rendue en mode template (with_icon_as_template), devient un bloc blanc.
+        #[cfg(target_os = "macos")]
+        let image = image::load_from_memory(icon).context("Failed to open icon path")?;
+        #[cfg(not(target_os = "macos"))]
         let image = load_icon_from_asset()
-            .unwrap_or(image::load_from_memory(icon).context("Failed to open icon path")?)
-            .into_rgba8();
+            .unwrap_or(image::load_from_memory(icon).context("Failed to open icon path")?);
+        let image = image.into_rgba8();
         let (width, height) = image.dimensions();
         let rgba = image.into_raw();
         (rgba, width, height)
